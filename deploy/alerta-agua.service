@@ -1,0 +1,24 @@
+[Unit]
+Description=Alerta Agua RJ - monitor de abastecimento
+Documentation=https://github.com/SEU-USUARIO/alerta-agua-rio
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/alerta-agua-rio
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+# Se o Telegram vier de variáveis de ambiente em vez do config.json:
+# Environment=TELEGRAM_BOT_TOKEN=123456:ABC...
+# Environment=TELEGRAM_CHAT_ID=987654321
+
+# Proteções básicas
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

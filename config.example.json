@@ -1,0 +1,36 @@
+{
+  "telegram": {
+    "bot_token": "",
+    "chat_id": ""
+  },
+  "pontuacao": {
+    "minimo_painel": 45,
+    "minimo_alerta": 60
+  },
+  "alertas": {
+    "max_por_ciclo": 4,
+    "janela_cluster_horas": 12,
+    "similaridade_cluster": 0.65,
+    "idade_maxima_horas": 72,
+    "enviar_primeira_vez": true
+  },
+  "coleta": {
+    "intervalo_segundos": 120,
+    "timeout_segundos": 25,
+    "janela_queries": "7d",
+    "idade_maxima_dias": 14,
+    "queries": [
+      "abastecimento água Santa Cruz Rio de Janeiro",
+      "falta de água Santa Cruz",
+      "\"Águas do Rio\" Santa Cruz",
+      "abastecimento Zona Oeste Rio de Janeiro",
+      "Guandu abastecimento Rio de Janeiro",
+      "Cedae manutenção abastecimento Rio",
+      "racionamento água Rio de Janeiro"
+    ]
+  },
+  "web": {
+    "host": "127.0.0.1",
+    "porta": 8765
+  }
+}

@@ -1,0 +1,52 @@
+name: Monitor de abastecimento
+
+on:
+  schedule:
+    # A cada 10 minutos. O GitHub atrasa com frequência (5-15 min).
+    # Para tentar mais rápido, troque por "*/5 * * * *".
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+# Evita duas execuções simultâneas mexendo no mesmo banco.
+concurrency:
+  group: monitor-abastecimento
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  checar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rodar uma checagem
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python app.py --once
+
+      - name: Gerar o painel estático
+        run: python app.py --exportar-html docs/index.html
+
+      - name: Publicar mudanças
+        run: |
+          # O HTML é determinístico: se não mudou, não há notícia nova.
+          if [ -z "$(git status --porcelain docs/index.html)" ]; then
+            echo "Sem notícias novas; nada a publicar."
+            exit 0
+          fi
+          git config user.name  "alerta-agua[bot]"
+          git config user.email "alerta-agua@users.noreply.github.com"
+          git add data/agua.db docs/index.html
+          git commit -m "atualiza: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
